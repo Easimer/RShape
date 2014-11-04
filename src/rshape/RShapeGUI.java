@@ -23,6 +23,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import rshape.io.StructReader;
 
 /**
  *
@@ -69,7 +70,12 @@ public class RShapeGUI extends javax.swing.JFrame {
         saveFile.setText("Save");
         saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         saveFile.addActionListener(new SaveFile());
+        JMenuItem openFile = new JMenuItem();
+        openFile.setText("Load");
+        openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        openFile.addActionListener(new OpenFile());
         jMenu1.add(newFile);
+        jMenu1.add(openFile);
         jMenu1.add(saveFile);
     }
 
@@ -152,6 +158,42 @@ public class RShapeGUI extends javax.swing.JFrame {
             {
                 case JFileChooser.APPROVE_OPTION:
                     
+                    break;
+                case JFileChooser.CANCEL_OPTION:
+                    break;
+            }
+        }
+    }
+    
+    class OpenFile implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent ae)
+        {
+            JFileChooser fc = new JFileChooser();
+            int ret = fc.showOpenDialog(fc);
+            switch(ret)
+            {
+                case JFileChooser.APPROVE_OPTION:
+                    int lofp = fc.getSelectedFile().getName().lastIndexOf('.');
+                    if(lofp >= 0)
+                    {
+                        switch(fc.getSelectedFile().getName().substring(lofp + 1))
+                        {
+                            case "rsf":
+                                map = RShape.LoadRShaperFile(fc.getSelectedFile());
+                                break;
+                            case "map":
+                                map = RShape.Decompile(fc.getSelectedFile().getName());
+                                break;
+                                
+                        }
+                    }
+                    landscape.setText(map.layers[0]);
+                    data1.setText(map.layers[1]);
+                    data2.setText(map.layers[2]);
+                    roads.setText(map.layers[3]);
+                    entities.setText(map.layers[4]);
                     break;
                 case JFileChooser.CANCEL_OPTION:
                     break;

@@ -118,6 +118,24 @@ public class RShape {
         sw.close();
     }
     
+    public static Map LoadRShaperFile(File file)
+    {
+        System.out.format("Loading file %s\n", file.getName());
+        StructReader<Map> sr = new StructReader(file);
+        Map m = sr.readObject();
+        sr.close();
+        if(m != null) System.out.println("Successfully loaded");
+        else System.out.println("Load failed");
+        return m;
+    }
+    
+    public static void SaveRShaperFile(File file, Map m)
+    {
+        StructWriter sw = new StructWriter<Map>(file);
+        sw.writeObject(m);
+        sw.close();
+    }
+    
     public static void ErrorMsg(String msg)
     {
         System.out.format("Error: %s\n", msg);

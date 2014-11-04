@@ -6,6 +6,8 @@
 package rshape;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,10 +32,20 @@ public class Map implements Serializable {
         this.title = title;
     }
     
-    public Map(int width, int height, String title, String... layers)
+    public Map(int width, int height, String title, String[] layers)
     {
         this(width, height, title);
-        System.arraycopy(layers, 0, this.layers, 0, layers.length); //i don't know what the fuck is this but netbeans offered this instead of a for loop and it works, so
+        for(int i = 0; i < layers.length; i++)
+        {
+            try
+            {
+                this.layers[i] = layers[i];
+            }
+            catch(Exception ex)
+            {
+                Logger.getGlobal().log(Level.SEVERE, "Layer " + i + " is bad.");
+            }
+        }
     }
     
     public void Clear()
