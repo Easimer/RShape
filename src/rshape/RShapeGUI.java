@@ -23,6 +23,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.DocumentFilter;
 import rshape.io.StructReader;
 
 /**
@@ -50,6 +51,11 @@ public class RShapeGUI extends javax.swing.JFrame {
         data2 = new JTextArea();
         roads = new JTextArea();
         entities = new JTextArea();
+        landscape.setLineWrap(true);
+        data1.setLineWrap(true);
+        data2.setLineWrap(true);
+        roads.setLineWrap(true);
+        entities.setLineWrap(true);
         
         jTabbedPane1.addTab("Landscape", landscape);
         jTabbedPane1.addTab("Data 1", data1);
@@ -181,19 +187,30 @@ public class RShapeGUI extends javax.swing.JFrame {
                         switch(fc.getSelectedFile().getName().substring(lofp + 1))
                         {
                             case "rsf":
-                                map = RShape.LoadRShaperFile(fc.getSelectedFile());
+                                System.out.println("Opening RShaper file");
+                                //map = RShape.LoadRShaperFile(fc.getSelectedFile());
                                 break;
                             case "map":
+                                System.out.println("Opening binary file");
                                 map = RShape.Decompile(fc.getSelectedFile().getName());
+                                System.out.println(map.layers[0]);
+                                
                                 break;
                                 
                         }
                     }
-                    landscape.setText(map.layers[0]);
-                    data1.setText(map.layers[1]);
-                    data2.setText(map.layers[2]);
-                    roads.setText(map.layers[3]);
-                    entities.setText(map.layers[4]);
+                    try
+                    {
+                        landscape.setText(map.layers[0]);
+                        data1.setText(map.layers[1]);
+                        data2.setText(map.layers[2]);
+                        roads.setText(map.layers[3]);
+                        entities.setText(map.layers[4]);
+                    }
+                    catch(NullPointerException ex)
+                    {
+                        System.out.println("Map is null?!");
+                    }
                     break;
                 case JFileChooser.CANCEL_OPTION:
                     break;

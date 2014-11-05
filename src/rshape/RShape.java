@@ -57,7 +57,7 @@ public class RShape {
                 title += new Character((char)(int)br.readByte());
         br.close();
         System.out.println("Map decompiled in: " + (System.currentTimeMillis() - start) + "ms");
-        return new Map(width, height, title, layers);
+        return new Map(width, height, title, layers[0], layers[1], layers[2], layers[3], layers[4]);
     }
     /**
      * Compile Map to binary file compatible with both 2DRPG 0.15 and Space-Game

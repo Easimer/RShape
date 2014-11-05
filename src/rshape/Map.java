@@ -17,6 +17,7 @@ public class Map implements Serializable {
     public Map()
     {
         this.version = 1;
+        this.layers = new String[5];
     }
     
     public Map(int width, int height)
@@ -32,7 +33,7 @@ public class Map implements Serializable {
         this.title = title;
     }
     
-    public Map(int width, int height, String title, String[] layers)
+    public Map(int width, int height, String title, String... layers)
     {
         this(width, height, title);
         for(int i = 0; i < layers.length; i++)
