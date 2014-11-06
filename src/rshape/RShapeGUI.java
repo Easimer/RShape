@@ -85,18 +85,7 @@ public class RShapeGUI extends javax.swing.JFrame {
         JMenuItem newFile = new JMenuItem();
         newFile.setText("New");
         newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-        newFile.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                map = new Map(32, 32);
-                landscape.setText("");
-                data1.setText("");
-                data2.setText("");
-                roads.setText("");
-                entities.setText("");
-            }
-        });
+        newFile.addActionListener(new NewFile());
         JMenuItem saveFile = new JMenuItem();
         saveFile.setText("Save");
         saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
@@ -112,6 +101,7 @@ public class RShapeGUI extends javax.swing.JFrame {
         jMenu1.add(openFile);
         jMenu1.add(saveFile);
         jMenu1.add(compileFile);
+        
     }
 
     /**
@@ -253,6 +243,27 @@ public class RShapeGUI extends javax.swing.JFrame {
         setVisible(true);
     }
     
+    class NewFile implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent ae)
+        {
+            map = new Map(50, 50);
+            for(JTextArea ta : new JTextArea[]{landscape, data1, data2, roads, entities})
+            {
+                if(ta == landscape)
+                    for(int i = 0; i < map.width * map.height; i++)
+                        ta.append("~");
+                else
+                {
+                    for(int i = 0; i < map.width * map.height; i++)
+                        ta.append(".");
+                }
+                ta.setText(ta.getText().replaceAll("(.{" + map.width + "})", "$1\n")); //format
+            }
+        }
+    }
+    
     class SaveFile implements ActionListener
     {
         @Override
@@ -265,7 +276,8 @@ public class RShapeGUI extends javax.swing.JFrame {
                 case JFileChooser.APPROVE_OPTION:
                     System.out.println("Saving to RSF");
                     RShape.SaveRShaperFile(fc.getSelectedFile(), map);
-                    path = fc.getSelectedFile().getName();
+                    path = fc.getSelectedFile().getAbsolutePath();
+                    setTitle(path);
                     break;
                 case JFileChooser.CANCEL_OPTION:
                     break;
@@ -294,7 +306,7 @@ public class RShapeGUI extends javax.swing.JFrame {
                                 break;
                             case "map":
                                 System.out.println("Opening binary file");
-                                map = RShape.Decompile(fc.getSelectedFile().getName());
+                                map = RShape.Decompile(fc.getSelectedFile().getAbsolutePath());
                                 break;
                                 
                         }
@@ -306,7 +318,8 @@ public class RShapeGUI extends javax.swing.JFrame {
                         data2.setText(map.layers[2].replaceAll("(.{" + map.width + "})", "$1\n"));
                         roads.setText(map.layers[3].replaceAll("(.{" + map.width + "})", "$1\n"));
                         entities.setText(map.layers[4].replaceAll("(.{" + map.width + "})", "$1\n"));
-                        path = fc.getSelectedFile().getName();
+                        path = fc.getSelectedFile().getAbsolutePath();
+                        setTitle(path);
                         switch(map.version)
                         {
                             case -127:
@@ -319,6 +332,7 @@ public class RShapeGUI extends javax.swing.JFrame {
                                 jRadioButton2.setEnabled(true);
                                 break;
                         }
+                        
                     }
                     catch(NullPointerException ex)
                     {
@@ -337,7 +351,7 @@ public class RShapeGUI extends javax.swing.JFrame {
         public void actionPerformed(ActionEvent ae)
         {
             JFileChooser fc = new JFileChooser();
-            int ret = fc.showOpenDialog(fc);
+            int ret = fc.showSaveDialog(fc);
             switch(ret)
             {
                 case JFileChooser.APPROVE_OPTION:
@@ -362,7 +376,7 @@ public class RShapeGUI extends javax.swing.JFrame {
                                     break;
                             }
                     }
-                    RShape.Compile(fc.getSelectedFile().getName(), map);
+                    RShape.Compile(fc.getSelectedFile().getAbsolutePath(), map);
                     break;
                 case JFileChooser.CANCEL_OPTION:
                     break;

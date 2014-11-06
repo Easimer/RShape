@@ -197,6 +197,8 @@ public class RShape {
         entities.put(3, 'r');
         entities.put(4, 'h');
         entities.put(5, 'n');
+        entities.put(6, 'w'); //coW
+        entities.put(7, 'o'); //hOrse
         // </editor-fold>
         Boolean ifn = false;
         Boolean ofn = false;
