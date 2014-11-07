@@ -168,6 +168,9 @@ public class RShape {
 	ints.put('c', 2);
 	ints.put('r', 3);
         ints.put('h', 4);
+        ints.put('n', 5);
+        ints.put('w', 6);
+        ints.put('o', 7);
 	/*
 	 * ---------
 	 */

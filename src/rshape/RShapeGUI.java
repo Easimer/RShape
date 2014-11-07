@@ -319,7 +319,9 @@ public class RShapeGUI extends javax.swing.JFrame {
                         roads.setText(map.layers[3].replaceAll("(.{" + map.width + "})", "$1\n"));
                         entities.setText(map.layers[4].replaceAll("(.{" + map.width + "})", "$1\n"));
                         path = fc.getSelectedFile().getAbsolutePath();
+                        jTextField1.setText(map.title);
                         setTitle(path);
+                        jRadioButton1.setEnabled(true);
                         switch(map.version)
                         {
                             case -127:
