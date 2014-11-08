@@ -6,10 +6,18 @@
 package rshape;
 import rshape.io.BinaryReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rshape.io.BinaryWriter;
 import rshape.io.StructReader;
 import rshape.io.StructWriter;
+import org.json.*;
 /**
  *
  * @author easimer
@@ -21,8 +29,15 @@ public class RShape {
     
     public static HashMap<Character, Integer> ints = new HashMap<Character, Integer>();
     public static HashMap<Integer, Character> landscape = new HashMap<Integer, Character>();
-    public static HashMap<Integer, Character> object = new HashMap<Integer, Character>();
+    public static HashMap<Integer, Character> data1 = new HashMap<Integer, Character>();
     public static HashMap<Integer, Character> entities = new HashMap<Integer, Character>();
+    public static HashMap<Integer, Character> data2 = new HashMap<Integer, Character>();
+    
+    static String gameinfo = "template.json";
+    
+    static char DefaultTileLS = '~';
+    static char DefaultTileD = '.';
+    
     private static final int VERSION = 1;
     /**
      * Decompile binary map to Map object
@@ -33,23 +48,19 @@ public class RShape {
     {
         long start = System.currentTimeMillis();
         BinaryReader br = new BinaryReader(new File(filename));
-        System.out.println("Reading size");
         int width = br.readTwoByte();
         int height = br.readTwoByte();
         int size = width * height;
 	String[] layers = new String[5];
 	for (int j = 0; j < layers.length; ++j) {
-            System.out.println("Reading layer " + j);
             layers[j] = "";
             for (int i = 0; i < size; ++i) {
             	int b = br.readTwoByte();
-		Character c = (j==0) ? landscape.get(b) : ((j==4)? entities.get(b) : object.get(b));                               
-		layers[j] += (c == null) ? ((j == 0) ? "~" : "." ): c;
+		Character c = (j==0) ? landscape.get(b) : ((j==4)? entities.get(b) : ((j == 1 || j == 3) ? data1.get(b) : data2.get(b)));                               
+		layers[j] += (c == null) ? ((j == 0) ? DefaultTileLS : DefaultTileD ): c;
             }
 	}
-        System.out.println("Reading version");
         int version = br.readByte();
-        System.out.println("Reading title");
         int titleLength = br.readTwoByte(); //min 0, max 65535
         String title = "";
         if(titleLength != 0)
@@ -60,7 +71,7 @@ public class RShape {
         return new Map(width, height, title, layers[0], layers[1], layers[2], layers[3], layers[4]);
     }
     /**
-     * Compile Map to binary file compatible with both 2DRPG 0.15 and Space-Game
+     * Compile Map to binary file compatible with 2DRPG 0.15
      * @param filename Name of file to write
      * @param m Map object
      */
@@ -69,12 +80,10 @@ public class RShape {
         long start = System.currentTimeMillis();
         int size = m.width * m.height;
         BinaryWriter bw = new BinaryWriter(new File(filename));
-        System.out.println("Writing map...");
         bw.writeTwoByte(m.width);
         bw.writeTwoByte(m.height);
         for(int i = 0; i < m.layers.length; i++)
         {
-            System.out.println("Writing layer " + i);
             int[] bdat = new int[size];
             for(int k = 0; k < size; k++)
             {
@@ -88,7 +97,6 @@ public class RShape {
             }
             bw.writeTwoBytes(bdat);
         }
-        System.out.println("Writing version and map title");
         bw.writeByte(m.version);
         bw.writeTwoByte(m.title.length());
         bw.writeBytes(m.title.getBytes());
@@ -97,45 +105,62 @@ public class RShape {
     }
     /**
      * Loads a RShaper File into a Map object
+     * @deprecated There's no point using another file format, see: <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue #2</a>
      * @param filename
-     * @return Map object
+     * @return m Map object
      */
+    @Deprecated
     public static Map LoadRShaperFile(String filename)
     {
-        System.out.format("Loading file %s\n", filename);
         StructReader<Map> sr = new StructReader(new File(filename));
         Map m = sr.readObject();
         sr.close();
-        if(m != null) System.out.println("Successfully loaded");
-        else System.out.println("Load failed");
         return m;
     }
-    
+    /**
+     * Save a Map into a RShaper File
+     * @deprecated There's no point using another file format, see: <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue #2</a>
+     * @param filename Filename
+     * @param m Map object
+     */
+    @Deprecated
     public static void SaveRShaperFile(String filename, Map m)
     {
         StructWriter sw = new StructWriter<Map>(new File(filename));
         sw.writeObject(m);
         sw.close();
     }
-    
+    /**
+     * Load a Rshaper File into a Map object
+     * @deprecated There's no point using another file format, see: <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue #2</a>
+     * @param file File
+     * @return m Map object
+     */
+    @Deprecated
     public static Map LoadRShaperFile(File file)
     {
-        System.out.format("Loading file %s\n", file.getName());
         StructReader<Map> sr = new StructReader(file);
         Map m = sr.readObject();
         sr.close();
-        if(m != null) System.out.println("Successfully loaded");
-        else System.out.println("Load failed");
         return m;
     }
-    
+    /**
+     * Save a Map into a RShaper File
+     * @deprecated There's no point using another file format, see: <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue #2</a>
+     * @param file
+     * @param m 
+     */
+    @Deprecated
     public static void SaveRShaperFile(File file, Map m)
     {
         StructWriter sw = new StructWriter<Map>(file);
         sw.writeObject(m);
         sw.close();
     }
-    
+    /**
+     * Display error
+     * @param msg Error message
+     */
     public static void ErrorMsg(String msg)
     {
         System.out.format("Error: %s\n", msg);
@@ -143,66 +168,6 @@ public class RShape {
     }
     
     public static void main(String[] args) {
-        // <editor-fold defaultstate="collapsed" desc="hashmap init">
-        ints.put('.', 0);
-	ints.put('1', 1);
-	ints.put('2', 2);
-	ints.put('3', 3);
-	ints.put('4', 4);
-	ints.put('5', 5);
-	ints.put('6', 6);
-	ints.put('7', 7);
-	/*
-	 * ---------
-	 */
-	ints.put('~', 0);
-	ints.put('g', 1);
-	ints.put('d', 2);
-	ints.put('s', 3);
-	ints.put('l', 4);
-	/*
-	 * ---------
-	 */
-	ints.put('z', 65535);
-	ints.put('*', 1);
-	ints.put('c', 2);
-	ints.put('r', 3);
-        ints.put('h', 4);
-        ints.put('n', 5);
-        ints.put('w', 6);
-        ints.put('o', 7);
-	/*
-	 * ---------
-	 */
-	object.put(0, '.');
-	object.put(1, '1');
-	object.put(2, '2');
-	object.put(3, '3');
-	object.put(4, '4');
-	object.put(5, '5');
-	object.put(6, '6');
-	object.put(7, '7');
-	/*
-	 * ---------
-	 */
-	landscape.put(0, '~');
-	landscape.put(1, 'g');
-	landscape.put(2, 'd');
-	landscape.put(3, 's');
-	landscape.put(4, 'l');
-	/*
-	 * ---------
-	 */
-	entities.put(65535, 'z');
-	entities.put(0, '.');
-	entities.put(1, '*');
-	entities.put(2, 'c');
-        entities.put(3, 'r');
-        entities.put(4, 'h');
-        entities.put(5, 'n');
-        entities.put(6, 'w'); //coW
-        entities.put(7, 'o'); //hOrse
-        // </editor-fold>
         Boolean ifn = false;
         Boolean ofn = false;
         Boolean mode = false;
@@ -210,6 +175,7 @@ public class RShape {
         String outfn = "";
         String infn = "";
         String modes = "";
+        
         RShapeGUI g;
         for(int i = 0; i < args.length; i++)
         {
@@ -221,7 +187,7 @@ public class RShape {
                     g.Show();
                     break;
                 case "-h":
-                    System.out.format("RShape Compiler - v%d\nHelp:\nExample syntax: rsc -o [output file] -m [mode] [input file]\n\nParameters:\n-o - output filename\n-m - mode\n\nModes:\ncompile - compile rshaper file to binary\ndecompile - decompile binary to rshaper file\n", VERSION);
+                    System.out.format("RShape Compiler - v%d\nHelp:\nExample syntax: rsc -o [output file] -g [gameinfo] -m [mode] [input file]\n\nParameters:\n-o - output filename\n\n-g - name of the gameinfo file without the extension\n-m - mode\n\nModes:\ncompile - compile rshaper file to binary\ndecompile - decompile binary to rshaper file\n", VERSION);
                     System.exit(0);
                     break;
                 case "-o":
@@ -240,9 +206,49 @@ public class RShape {
                         i++;
                     }
                     break;
+                case "-g":
+                    if(i + 1 < args.length - 1)
+                    {
+                        gameinfo = args[i + 1];
+                        i++;
+                    }
+                    break;
             }
             if(ifn = ofn && mode)
                 infn = args[i];
+        }
+        JSONTokener jt = null;
+        try {
+            jt = new JSONTokener(new String(Files.readAllBytes(Paths.get("games/" + gameinfo)), Charset.defaultCharset()));
+        } catch (IOException ex) {
+            ErrorMsg(String.format("Error: Gameinfo file \"games/%s\" missing\n", gameinfo));
+        }
+        if(jt != null)
+        {
+            JSONObject o = new JSONObject(jt);
+            
+            DefaultTileLS = o.getString("default_tile").charAt(0);
+            DefaultTileD = o.getString("default_dtile").charAt(0);
+            JSONObject landso = o.getJSONObject("landscape");
+            JSONObject data1o = o.getJSONObject("data1");
+            JSONObject data2o = o.getJSONObject("data2");
+            JSONObject ento = o.getJSONObject("entities");
+            for(String key : landso.keySet())
+                landscape.put(landso.getInt(key), key.charAt(0));
+            for(String key : data1o.keySet())
+                data1.put(data1o.getInt(key), key.charAt(0));
+            for(String key :data2o.keySet())
+                data2.put(data2o.getInt(key), key.charAt(0));
+            for(String key : ento.keySet())
+                entities.put(ento.getInt(key), key.charAt(0));
+            for(Integer i : landscape.keySet())
+                ints.put(landscape.get(i), i);
+            for(Integer i : data1.keySet())
+                ints.put(data1.get(i), i);
+            for(Integer i : data2.keySet())
+                ints.put(data2.get(i), i);
+            for(Integer i : entities.keySet())
+                ints.put(entities.get(i), i);
         }
         if(!(ifn && ofn && mode) && !gui)
                 ErrorMsg("not enough parameters");
