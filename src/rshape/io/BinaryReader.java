@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 rothens
+ * Copyright (C) 2014 easimer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@ import java.io.IOException;
 
 /**
  *
- * @author rothens
+ * @author rothens, easimer
  */
 public class BinaryReader {
 
@@ -100,6 +101,11 @@ public class BinaryReader {
         return s;
     }
 
+    /**
+     * Read 2 byte length prefixed string
+     *
+     * @return String
+     */
     public String read2BLPString() {
         String s = "";
         try {
@@ -110,6 +116,29 @@ public class BinaryReader {
                     if (c != '\0') {
                         s += c;
                     }
+                }
+            }
+        } catch (IOException ioe) {
+            System.out.println("IO Error while reading string: " + ioe);
+        }
+        return s;
+    }
+
+    /**
+     * Read null-terminated String
+     *
+     * @return String
+     */
+    public String readNTString() {
+        String s = "";
+        try {
+            char c = ' ';
+            for (;;) {
+                c = (char) (int) ds.readByte();
+                if (c != '\0') {
+                    s += c;
+                } else {
+                    break;
                 }
             }
         } catch (IOException ioe) {
