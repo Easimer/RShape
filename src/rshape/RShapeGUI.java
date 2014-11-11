@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package rshape;
 
 import java.awt.Font;
@@ -58,7 +57,6 @@ public class RShapeGUI extends javax.swing.JFrame {
     private javax.swing.JTextArea entities;
     private String path;
     private Map map;
-    private ButtonGroup btng;
 
     /**
      * Creates new form RShapeGUI
@@ -90,10 +88,6 @@ public class RShapeGUI extends javax.swing.JFrame {
         jTabbedPane1.addTab("Roads", new JScrollPane(roads, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
         jTabbedPane1.addTab("Entities", new JScrollPane(entities, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
 
-        btng = new ButtonGroup();
-        btng.add(jRadioButton1);
-        btng.add(jRadioButton2);
-
         JMenuItem newFile = new JMenuItem();
         newFile.setText("New");
         newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
@@ -106,14 +100,9 @@ public class RShapeGUI extends javax.swing.JFrame {
         openFile.setText("Load");
         openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
         openFile.addActionListener(new OpenFile());
-        JMenuItem compileFile = new JMenuItem();
-        compileFile.setText("Compile");
-        compileFile.addActionListener(new Compile());
         jMenu1.add(newFile);
         jMenu1.add(openFile);
         jMenu1.add(saveFile);
-        jMenu1.add(compileFile);
-
     }
 
     /**
@@ -131,9 +120,6 @@ public class RShapeGUI extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
 
@@ -154,30 +140,16 @@ public class RShapeGUI extends javax.swing.JFrame {
             .addGap(0, 105, Short.MAX_VALUE)
         );
 
-        jLabel2.setText("Version:");
-
-        jRadioButton1.setText("2DRPG");
-
-        jRadioButton2.setText("Space-Game");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jRadioButton1)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jRadioButton2)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(jLabel1)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -188,14 +160,7 @@ public class RShapeGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton2)))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(523, Short.MAX_VALUE))
         );
 
@@ -255,10 +220,11 @@ public class RShapeGUI extends javax.swing.JFrame {
         public void actionPerformed(ActionEvent ae) {
             map = new Map(50, 50, "", new String[5]); //it looks like the game only loads the map if the map's size is 50x50
             for (JTextArea ta : new JTextArea[]{landscape, data1, data2, roads, entities}) {
-                if(ta == landscape)
+                if (ta == landscape) {
                     ta.setText(map.layers[0].replaceAll("(.{" + map.width + "})", "$1\n"));
-                else
+                } else {
                     ta.setText(map.layers[1].replaceAll("(.{" + map.width + "})", "$1\n")); //i'm a lazy fuck
+                }
             }
         }
     }
@@ -271,9 +237,16 @@ public class RShapeGUI extends javax.swing.JFrame {
             int ret = fc.showSaveDialog(fc);
             switch (ret) {
                 case JFileChooser.APPROVE_OPTION:
-                    System.out.println("Saving to RSF");
-                    RShape.SaveRShaperFile(fc.getSelectedFile(), map);
+                    System.out.println("Saving...");
+                    map.layers[0] = landscape.getText().replace("\n", "");
+                    map.layers[1] = data1.getText().replace("\n", "");
+                    map.layers[2] = data2.getText().replace("\n", "");
+                    map.layers[3] = roads.getText().replace("\n", "");
+                    map.layers[4] = entities.getText().replace("\n", "");
+                    map.title = jTextField1.getText();
+                    map.version = 1;
                     path = fc.getSelectedFile().getAbsolutePath();
+                    RShape.Save(path, map);
                     setTitle(path);
                     break;
                 case JFileChooser.CANCEL_OPTION:
@@ -286,22 +259,22 @@ public class RShapeGUI extends javax.swing.JFrame {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
+            
             JFileChooser fc = new JFileChooser();
             int ret = fc.showOpenDialog(fc);
             switch (ret) {
                 case JFileChooser.APPROVE_OPTION:
+                    System.out.println("Opening...");
                     int lofp = fc.getSelectedFile().getName().lastIndexOf('.');
                     if (lofp >= 0) {
                         switch (fc.getSelectedFile().getName().substring(lofp + 1)) {
-                            case "rsf":
-                                System.out.println("Opening RShaper file");
-                                map = RShape.LoadRShaperFile(fc.getSelectedFile());
-                                break;
                             case "map":
                                 System.out.println("Opening binary file");
-                                map = RShape.Decompile(fc.getSelectedFile().getAbsolutePath());
+                                map = RShape.Open(fc.getSelectedFile().getAbsolutePath());
                                 break;
-
+                            default:
+                                System.out.println("Invalid filetype");
+                                return;
                         }
                     }
                     try {
@@ -313,19 +286,6 @@ public class RShapeGUI extends javax.swing.JFrame {
                         path = fc.getSelectedFile().getAbsolutePath();
                         jTextField1.setText(map.title);
                         setTitle(path);
-                        jRadioButton1.setEnabled(true);
-                        switch (map.version) {
-                            case -127:
-                                jRadioButton1.setEnabled(true);
-                                break;
-                            case 1:
-                                jRadioButton1.setEnabled(true);
-                                break;
-                            case 2:
-                                jRadioButton2.setEnabled(true);
-                                break;
-                        }
-
                     } catch (NullPointerException ex) {
                         System.out.println("Map is null?!");
                     }
@@ -336,54 +296,13 @@ public class RShapeGUI extends javax.swing.JFrame {
         }
     }
 
-    class Compile implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            JFileChooser fc = new JFileChooser();
-            int ret = fc.showSaveDialog(fc);
-            switch (ret) {
-                case JFileChooser.APPROVE_OPTION:
-                    System.out.println("Compiling map");
-                    map.layers[0] = landscape.getText().replace("\n", "");
-                    map.layers[1] = data1.getText().replace("\n", "");
-                    map.layers[2] = data2.getText().replace("\n", "");
-                    map.layers[3] = roads.getText().replace("\n", "");
-                    map.layers[4] = entities.getText().replace("\n", "");
-                    map.title = jTextField1.getText();
-                    map.version = 1;
-                    /*for (Enumeration<AbstractButton> buttons = btng.getElements(); buttons.hasMoreElements();)
-                     {
-                     AbstractButton button = buttons.nextElement();
-                     if(button.isSelected())
-                     switch(button.getText())
-                     {
-                     case "2DRPG":
-                     map.version = 1;
-                     break;
-                     case "Space-Game":
-                     map.version = 2;
-                     break;
-                     }
-                     }*/
-                    RShape.Compile(fc.getSelectedFile().getAbsolutePath(), map);
-                    break;
-                case JFileChooser.CANCEL_OPTION:
-                    break;
-            }
-        }
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables

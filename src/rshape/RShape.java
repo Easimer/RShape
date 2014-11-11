@@ -56,7 +56,7 @@ public class RShape {
      * @param filename
      * @return Map object
      */
-    public static Map Decompile(String filename) {
+    public static Map Open(String filename) {
         long start = System.currentTimeMillis();
         BinaryReader br = new BinaryReader(new File(filename));
         int width = br.readTwoByte();
@@ -84,7 +84,7 @@ public class RShape {
      * @param filename Name of file to write
      * @param m Map object
      */
-    public static void Compile(String filename, Map m) {
+    public static void Save(String filename, Map m) {
         long start = System.currentTimeMillis();
         int size = m.width * m.height;
         BinaryWriter bw = new BinaryWriter(new File(filename));
@@ -111,72 +111,6 @@ public class RShape {
     }
 
     /**
-     * Loads a RShaper File into a Map object
-     *
-     * @deprecated There's no point using another file format, see:
-     * <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue
-     * #2</a>
-     * @param filename
-     * @return m Map object
-     */
-    @Deprecated
-    public static Map LoadRShaperFile(String filename) {
-        StructReader<Map> sr = new StructReader(new File(filename));
-        Map m = sr.readObject();
-        sr.close();
-        return m;
-    }
-
-    /**
-     * Save a Map into a RShaper File
-     *
-     * @deprecated There's no point using another file format, see:
-     * <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue
-     * #2</a>
-     * @param filename Filename
-     * @param m Map object
-     */
-    @Deprecated
-    public static void SaveRShaperFile(String filename, Map m) {
-        StructWriter sw = new StructWriter<Map>(new File(filename));
-        sw.writeObject(m);
-        sw.close();
-    }
-
-    /**
-     * Load a Rshaper File into a Map object
-     *
-     * @deprecated There's no point using another file format, see:
-     * <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue
-     * #2</a>
-     * @param file File
-     * @return m Map object
-     */
-    @Deprecated
-    public static Map LoadRShaperFile(File file) {
-        StructReader<Map> sr = new StructReader(file);
-        Map m = sr.readObject();
-        sr.close();
-        return m;
-    }
-
-    /**
-     * Save a Map into a RShaper File
-     *
-     * @deprecated There's no point using another file format, see:
-     * <a href="http://easigit.tk/rshape/issue/2/import-export-text-file">Issue
-     * #2</a>
-     * @param file
-     * @param m
-     */
-    @Deprecated
-    public static void SaveRShaperFile(File file, Map m) {
-        StructWriter sw = new StructWriter<Map>(file);
-        sw.writeObject(m);
-        sw.close();
-    }
-
-    /**
      * Display error
      *
      * @param msg Error message
@@ -187,34 +121,13 @@ public class RShape {
     }
 
     public static void main(String[] args) {
-        Boolean ifn = false;
-        Boolean ofn = false;
-        Boolean mode = false;
-        Boolean gui = false;
-        String outfn = "";
-        String infn = "";
-        String modes = "";
 
         RShapeGUI g;
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "-h":
-                    System.out.format("RShape Compiler - v%d\nHelp:\nExample syntax: rsc -o [output file] -g [gameinfo] -m [mode] [input file]\n\nParameters:\n-o - output filename\n\n-g - name of the gameinfo file without the extension\n-m - mode\n\nModes:\ncompile - compile rshaper file to binary\ndecompile - decompile binary to rshaper file\n", VERSION);
+                    System.out.format("RShape Compiler - v%d\nHelp:\nExample syntax: RShape.jar -g mygame.json\n\nParameters:\n-g - name of the gameinfo file\n", VERSION);
                     System.exit(0);
-                    break;
-                case "-o":
-                    if (i + 1 < args.length - 1) {
-                        outfn = args[i + 1];
-                        ofn = true;
-                        i++;
-                    }
-                    break;
-                case "-m":
-                    if (i + 1 < args.length - 1) {
-                        modes = args[i + 1];
-                        mode = true;
-                        i++;
-                    }
                     break;
                 case "-g":
                     if (i + 1 < args.length - 1) {
@@ -222,9 +135,6 @@ public class RShape {
                         i++;
                     }
                     break;
-            }
-            if (ifn = ofn) { //i don't know what is this
-                infn = args[i];
             }
         }
         JSONTokener jt = null;
@@ -267,29 +177,6 @@ public class RShape {
                 ints.put(entities.get(i), i);
             }
         }
-        if (!mode) {
-            gui = true;
-            g = new RShapeGUI();
-            g.Show();
-        }
-        if (!(ifn && ofn) && !gui) {
-            ErrorMsg("not enough parameters");
-        }
-        if (!gui) {
-            System.out.format("Input file: %s\nOutput file: %s\nMode: %s\n", infn, outfn, modes);
-        }
-        switch (modes) {
-            case "compile":
-                Compile(outfn, LoadRShaperFile(infn));
-                break;
-            case "decompile":
-                SaveRShaperFile(outfn, Decompile(infn));
-                break;
-            default:
-                if (!gui) {
-                    ErrorMsg("invalid mode");
-                }
-                break;
-        }
+        new RShapeGUI().Show();
     }
 }
