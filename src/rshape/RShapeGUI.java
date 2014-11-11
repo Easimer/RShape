@@ -253,18 +253,12 @@ public class RShapeGUI extends javax.swing.JFrame {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            map = new Map(50, 50, "", new String[5]);
+            map = new Map(50, 50, "", new String[5]); //it looks like the game only loads the map if the map's size is 50x50
             for (JTextArea ta : new JTextArea[]{landscape, data1, data2, roads, entities}) {
-                if (ta == landscape) {
-                    for (int i = 0; i < map.width * map.height; i++) {
-                        ta.append("~");
-                    }
-                } else {
-                    for (int i = 0; i < map.width * map.height; i++) {
-                        ta.append(".");
-                    }
-                }
-                ta.setText(ta.getText().replaceAll("(.{" + map.width + "})", "$1\n")); //format
+                if(ta == landscape)
+                    ta.setText(map.layers[0].replaceAll("(.{" + map.width + "})", "$1\n"));
+                else
+                    ta.setText(map.layers[1].replaceAll("(.{" + map.width + "})", "$1\n")); //i'm a lazy fuck
             }
         }
     }

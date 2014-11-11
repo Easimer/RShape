@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package rshape;
 
 import rshape.io.BinaryReader;
@@ -36,7 +35,6 @@ import org.json.*;
  *
  * @author easimer
  */
-
 public class RShape {
 
     public static HashMap<Character, Integer> ints = new HashMap<Character, Integer>();
@@ -200,11 +198,6 @@ public class RShape {
         RShapeGUI g;
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
-                case "-gui":
-                    gui = true;
-                    g = new RShapeGUI();
-                    g.Show();
-                    break;
                 case "-h":
                     System.out.format("RShape Compiler - v%d\nHelp:\nExample syntax: rsc -o [output file] -g [gameinfo] -m [mode] [input file]\n\nParameters:\n-o - output filename\n\n-g - name of the gameinfo file without the extension\n-m - mode\n\nModes:\ncompile - compile rshaper file to binary\ndecompile - decompile binary to rshaper file\n", VERSION);
                     System.exit(0);
@@ -230,7 +223,7 @@ public class RShape {
                     }
                     break;
             }
-            if (ifn = ofn && mode) {
+            if (ifn = ofn) { //i don't know what is this
                 infn = args[i];
             }
         }
@@ -274,10 +267,17 @@ public class RShape {
                 ints.put(entities.get(i), i);
             }
         }
-        if (!(ifn && ofn && mode) && !gui) {
+        if (!mode) {
+            gui = true;
+            g = new RShapeGUI();
+            g.Show();
+        }
+        if (!(ifn && ofn) && !gui) {
             ErrorMsg("not enough parameters");
         }
-        System.out.format("Input file: %s\nOutput file: %s\nMode: %s\n", infn, outfn, modes);
+        if (!gui) {
+            System.out.format("Input file: %s\nOutput file: %s\nMode: %s\n", infn, outfn, modes);
+        }
         switch (modes) {
             case "compile":
                 Compile(outfn, LoadRShaperFile(infn));

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package rshape;
 
 import java.io.Serializable;
@@ -40,11 +39,23 @@ public class Map implements Serializable {
                 Logger.getGlobal().log(Level.SEVERE, "Layer " + i + " is bad.");
             }
         }
+        Clear();
     }
 
     public void Clear() {
         this.layers = new String[5];
-        this.title = title;
+        this.title = "";
+        for (int i = 0; i < layers.length; i++) {
+            if (i == 1) {
+                for (int j = 0; j < width * height; j++) {
+                    layers[i] += RShape.DefaultTileLS;
+                }
+            } else {
+                for (int j = 0; j < width * height; j++) {
+                    layers[i] += RShape.DefaultTileD;
+                }
+            }
+        }
     }
     int width, height;
     String[] layers;
