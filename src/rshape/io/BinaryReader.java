@@ -27,47 +27,106 @@ import java.io.IOException;
  */
 public class BinaryReader {
 
-	FileInputStream fs;
-	public DataInputStream ds;
+    FileInputStream fs;
+    public DataInputStream ds;
 
-	public BinaryReader(File f) {
-		try {
-			if (!f.exists()) {
-				throw new IllegalArgumentException("File not found: " + f.getCanonicalPath());
-			}
-			fs = new FileInputStream(f);
-			ds = new DataInputStream(fs);
-		} catch (IOException ioe) {
-			System.out.println("IO Error");
-		}
-	}
+    /**
+     * BinaryReader constructor
+     *
+     * @param f File
+     */
+    public BinaryReader(File f) {
+        try {
+            if (!f.exists()) {
+                throw new IllegalArgumentException("File not found: " + f.getCanonicalPath());
+            }
+            fs = new FileInputStream(f);
+            ds = new DataInputStream(fs);
+        } catch (IOException ioe) {
+            System.out.println("IO Error while opening binary file: " + ioe);
+        }
+    }
 
-	public byte readByte() {
-		try {
-			return ds.readByte();
-		} catch (IOException ex) {
-			System.out.println("IO Error");
-		}
-		return -127;
-	}
+    /**
+     * Read a byte
+     *
+     * @return Byte
+     */
+    public byte readByte() {
+        try {
+            return ds.readByte();
+        } catch (IOException ioe) {
+            System.out.println("IO Error while reading a byte: " + ioe);
+        }
+        return -127;
+    }
 
-	public int readTwoByte() {
-		try {
-			byte a = ds.readByte();
-			byte b = ds.readByte();
-			return ((a & 0xff << 8) | (b & 0xff));
-		} catch (IOException ioe) {
-			System.out.println("IO Error");
-		}
-		return Integer.MIN_VALUE;
-	}
+    /**
+     * Read two bytes
+     *
+     * @return Two bytes as an int
+     */
+    public int readTwoByte() {
+        try {
+            byte a = ds.readByte();
+            byte b = ds.readByte();
+            return ((a & 0xff << 8) | (b & 0xff));
+        } catch (IOException ioe) {
+            System.out.println("IO Error while reading two bytes: " + ioe);
+        }
+        return Integer.MIN_VALUE;
+    }
 
-	public void close() {
-		try {
-			ds.close();
-			fs.close();
-		} catch (IOException ex) {
-			System.out.println("IO Error");
-		}
-	}
+    /**
+     * Read 1 byte length prefixed string
+     *
+     * @return String
+     */
+    public String read1BLPString() {
+        String s = "";
+        try {
+            int length = readByte();
+            if (length != 0) {
+                for (int i = 0; i < length; i++) {
+                    Character c = (char) (int) ds.readByte();
+                    if (c != '\0') {
+                        s += c;
+                    }
+                }
+            }
+        } catch (IOException ioe) {
+            System.out.println("IO Error while reading string: " + ioe);
+        }
+        return s;
+    }
+
+    public String read2BLPString() {
+        String s = "";
+        try {
+            int length = readTwoByte();
+            if (length != 0) {
+                for (int i = 0; i < length; i++) {
+                    Character c = (char) (int) ds.readByte();
+                    if (c != '\0') {
+                        s += c;
+                    }
+                }
+            }
+        } catch (IOException ioe) {
+            System.out.println("IO Error while reading string: " + ioe);
+        }
+        return s;
+    }
+
+    /**
+     * Close FileInputStream and DataInputStream
+     */
+    public void close() {
+        try {
+            ds.close();
+            fs.close();
+        } catch (IOException ex) {
+            System.out.println("IO Error");
+        }
+    }
 }

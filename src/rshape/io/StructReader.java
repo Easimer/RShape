@@ -18,36 +18,37 @@ import java.util.logging.Logger;
  * @author easimer
  */
 public class StructReader<T> {
+
     FileInputStream fs;
     public ObjectInputStream is;
+
     public StructReader(File f) {
-		try {
-			if (!f.exists()) {
-				throw new IllegalArgumentException("File not found: " + f.getCanonicalPath());
-			}
-			fs = new FileInputStream(f);
-			is = new ObjectInputStream(fs);
-		} catch (IOException ioe) {
-			System.out.println("IO Error");
-		}
-	}
-    
-    public T readObject()
-    {
         try {
-            return (T)is.readObject();
+            if (!f.exists()) {
+                throw new IllegalArgumentException("File not found: " + f.getCanonicalPath());
+            }
+            fs = new FileInputStream(f);
+            is = new ObjectInputStream(fs);
+        } catch (IOException ioe) {
+            System.out.println("IO Error");
+        }
+    }
+
+    public T readObject() {
+        try {
+            return (T) is.readObject();
         } catch (Exception ex) {
             System.out.println("IO Error");
             return null;
         }
     }
-    
+
     public void close() {
-		try {
-			is.close();
-			fs.close();
-		} catch (IOException ex) {
-			System.out.println("IO Error");
-		}
-	}
+        try {
+            is.close();
+            fs.close();
+        } catch (IOException ex) {
+            System.out.println("IO Error");
+        }
+    }
 }

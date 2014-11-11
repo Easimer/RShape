@@ -30,64 +30,64 @@ import java.util.logging.Logger;
  */
 public class BinaryWriter {
 
-	FileOutputStream fs;
-	public DataOutputStream ds;
+    FileOutputStream fs;
+    public DataOutputStream ds;
 
-	public BinaryWriter(File f) {
+    public BinaryWriter(File f) {
 
-		try {
-			if (!f.exists()) {
-				f.createNewFile();
-			}
-			fs = new FileOutputStream(f);
-			ds = new DataOutputStream(fs);
-		} catch (IOException ioe) {
-			System.out.println("IO Error");
-		}
-	}
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            fs = new FileOutputStream(f);
+            ds = new DataOutputStream(fs);
+        } catch (IOException ioe) {
+            System.out.println("IO Error");
+        }
+    }
 
-	public void writeByte(int b) {
-		try {
+    public void writeByte(int b) {
+        try {
 
-			ds.writeByte(b);
-		} catch (IOException ex) {
-			System.out.println("IO Error");
-		}
-	}
+            ds.writeByte(b);
+        } catch (IOException ex) {
+            System.out.println("IO Error");
+        }
+    }
 
-	public void writeTwoByte(int val) {
-		byte a = (byte) ((val >> 8) & 0xff);
-		byte b = (byte) (val & 0xff);
-		try {
-			ds.writeByte(a);
-			ds.writeByte(b);
-		} catch (IOException ex) {
-			System.out.println("IO Error");
-		}
-	}
+    public void writeTwoByte(int val) {
+        byte a = (byte) ((val >> 8) & 0xff);
+        byte b = (byte) (val & 0xff);
+        try {
+            ds.writeByte(a);
+            ds.writeByte(b);
+        } catch (IOException ex) {
+            System.out.println("IO Error");
+        }
+    }
 
-	public void writeTwoBytes(int[] i) {
-		for (int in : i) {
-			writeTwoByte(in);
-		}
-	}
+    public void writeTwoBytes(int[] i) {
+        for (int in : i) {
+            writeTwoByte(in);
+        }
+    }
 
-	public void writeBytes(byte[] b) {
-		try {
-			for (byte by : b) {
-				ds.writeByte(by);
-			}
-		} catch (IOException ex) {
-			System.out.println("IO Error");
-		}
-	}
+    public void writeBytes(byte[] b) {
+        try {
+            for (byte by : b) {
+                ds.writeByte(by);
+            }
+        } catch (IOException ex) {
+            System.out.println("IO Error");
+        }
+    }
 
-	public void close() {
-		try {
-			ds.close();
-			fs.close();
-		} catch (Exception e) {
-			System.out.println("IO Error on close");
-		}
-	}
+    public void close() {
+        try {
+            ds.close();
+            fs.close();
+        } catch (Exception e) {
+            System.out.println("IO Error on close");
+        }
+    }
 }

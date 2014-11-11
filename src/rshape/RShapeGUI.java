@@ -47,13 +47,13 @@ public class RShapeGUI extends javax.swing.JFrame {
     private String path;
     private Map map;
     private ButtonGroup btng;
-    
+
     /**
      * Creates new form RShapeGUI
      */
     public RShapeGUI() {
         initComponents();
-        
+
         landscape = new JTextArea();
         data1 = new JTextArea();
         data2 = new JTextArea();
@@ -71,17 +71,17 @@ public class RShapeGUI extends javax.swing.JFrame {
         data2.setFont(font);
         roads.setFont(font);
         entities.setFont(font);
-        
-        jTabbedPane1.addTab("Landscape", new JScrollPane (landscape, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
-        jTabbedPane1.addTab("Data 1", new JScrollPane (data1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
-        jTabbedPane1.addTab("Data 2", new JScrollPane (data2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
-        jTabbedPane1.addTab("Roads", new JScrollPane (roads, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
-        jTabbedPane1.addTab("Entities", new JScrollPane (entities, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
-        
+
+        jTabbedPane1.addTab("Landscape", new JScrollPane(landscape, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
+        jTabbedPane1.addTab("Data 1", new JScrollPane(data1, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
+        jTabbedPane1.addTab("Data 2", new JScrollPane(data2, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
+        jTabbedPane1.addTab("Roads", new JScrollPane(roads, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
+        jTabbedPane1.addTab("Entities", new JScrollPane(entities, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS));
+
         btng = new ButtonGroup();
         btng.add(jRadioButton1);
         btng.add(jRadioButton2);
-        
+
         JMenuItem newFile = new JMenuItem();
         newFile.setText("New");
         newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
@@ -101,7 +101,7 @@ public class RShapeGUI extends javax.swing.JFrame {
         jMenu1.add(openFile);
         jMenu1.add(saveFile);
         jMenu1.add(compileFile);
-        
+
     }
 
     /**
@@ -211,7 +211,6 @@ public class RShapeGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     public void Show() {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -237,37 +236,34 @@ public class RShapeGUI extends javax.swing.JFrame {
         //</editor-fold>
         setVisible(true);
     }
-    
-    class NewFile implements ActionListener
-    {
+
+    class NewFile implements ActionListener {
+
         @Override
-        public void actionPerformed(ActionEvent ae)
-        {
+        public void actionPerformed(ActionEvent ae) {
             map = new Map(50, 50);
-            for(JTextArea ta : new JTextArea[]{landscape, data1, data2, roads, entities})
-            {
-                if(ta == landscape)
-                    for(int i = 0; i < map.width * map.height; i++)
+            for (JTextArea ta : new JTextArea[]{landscape, data1, data2, roads, entities}) {
+                if (ta == landscape) {
+                    for (int i = 0; i < map.width * map.height; i++) {
                         ta.append("~");
-                else
-                {
-                    for(int i = 0; i < map.width * map.height; i++)
+                    }
+                } else {
+                    for (int i = 0; i < map.width * map.height; i++) {
                         ta.append(".");
+                    }
                 }
                 ta.setText(ta.getText().replaceAll("(.{" + map.width + "})", "$1\n")); //format
             }
         }
     }
-    
-    class SaveFile implements ActionListener
-    {
+
+    class SaveFile implements ActionListener {
+
         @Override
-        public void actionPerformed(ActionEvent ae)
-        {
+        public void actionPerformed(ActionEvent ae) {
             JFileChooser fc = new JFileChooser();
             int ret = fc.showSaveDialog(fc);
-            switch(ret)
-            {
+            switch (ret) {
                 case JFileChooser.APPROVE_OPTION:
                     System.out.println("Saving to RSF");
                     RShape.SaveRShaperFile(fc.getSelectedFile(), map);
@@ -279,22 +275,18 @@ public class RShapeGUI extends javax.swing.JFrame {
             }
         }
     }
-    
-    class OpenFile implements ActionListener
-    {
+
+    class OpenFile implements ActionListener {
+
         @Override
-        public void actionPerformed(ActionEvent ae)
-        {
+        public void actionPerformed(ActionEvent ae) {
             JFileChooser fc = new JFileChooser();
             int ret = fc.showOpenDialog(fc);
-            switch(ret)
-            {
+            switch (ret) {
                 case JFileChooser.APPROVE_OPTION:
                     int lofp = fc.getSelectedFile().getName().lastIndexOf('.');
-                    if(lofp >= 0)
-                    {
-                        switch(fc.getSelectedFile().getName().substring(lofp + 1))
-                        {
+                    if (lofp >= 0) {
+                        switch (fc.getSelectedFile().getName().substring(lofp + 1)) {
                             case "rsf":
                                 System.out.println("Opening RShaper file");
                                 map = RShape.LoadRShaperFile(fc.getSelectedFile());
@@ -303,11 +295,10 @@ public class RShapeGUI extends javax.swing.JFrame {
                                 System.out.println("Opening binary file");
                                 map = RShape.Decompile(fc.getSelectedFile().getAbsolutePath());
                                 break;
-                                
+
                         }
                     }
-                    try
-                    {
+                    try {
                         landscape.setText(map.layers[0].replaceAll("(.{" + map.width + "})", "$1\n"));
                         data1.setText(map.layers[1].replaceAll("(.{" + map.width + "})", "$1\n"));
                         data2.setText(map.layers[2].replaceAll("(.{" + map.width + "})", "$1\n"));
@@ -317,8 +308,7 @@ public class RShapeGUI extends javax.swing.JFrame {
                         jTextField1.setText(map.title);
                         setTitle(path);
                         jRadioButton1.setEnabled(true);
-                        switch(map.version)
-                        {
+                        switch (map.version) {
                             case -127:
                                 jRadioButton1.setEnabled(true);
                                 break;
@@ -329,10 +319,8 @@ public class RShapeGUI extends javax.swing.JFrame {
                                 jRadioButton2.setEnabled(true);
                                 break;
                         }
-                        
-                    }
-                    catch(NullPointerException ex)
-                    {
+
+                    } catch (NullPointerException ex) {
                         System.out.println("Map is null?!");
                     }
                     break;
@@ -341,16 +329,14 @@ public class RShapeGUI extends javax.swing.JFrame {
             }
         }
     }
-    
-    class Compile implements ActionListener
-    {
+
+    class Compile implements ActionListener {
+
         @Override
-        public void actionPerformed(ActionEvent ae)
-        {
+        public void actionPerformed(ActionEvent ae) {
             JFileChooser fc = new JFileChooser();
             int ret = fc.showSaveDialog(fc);
-            switch(ret)
-            {
+            switch (ret) {
                 case JFileChooser.APPROVE_OPTION:
                     System.out.println("Compiling map");
                     map.layers[0] = landscape.getText().replace("\n", "");
@@ -359,20 +345,21 @@ public class RShapeGUI extends javax.swing.JFrame {
                     map.layers[3] = roads.getText().replace("\n", "");
                     map.layers[4] = entities.getText().replace("\n", "");
                     map.title = jTextField1.getText();
-                    for (Enumeration<AbstractButton> buttons = btng.getElements(); buttons.hasMoreElements();)
-                    {
-                        AbstractButton button = buttons.nextElement();
-                        if(button.isSelected())
-                            switch(button.getText())
-                            {
-                                case "2DRPG":
-                                    map.version = 1;
-                                    break;
-                                case "Space-Game":
-                                    map.version = 2;
-                                    break;
-                            }
-                    }
+                    map.version = 1;
+                    /*for (Enumeration<AbstractButton> buttons = btng.getElements(); buttons.hasMoreElements();)
+                     {
+                     AbstractButton button = buttons.nextElement();
+                     if(button.isSelected())
+                     switch(button.getText())
+                     {
+                     case "2DRPG":
+                     map.version = 1;
+                     break;
+                     case "Space-Game":
+                     map.version = 2;
+                     break;
+                     }
+                     }*/
                     RShape.Compile(fc.getSelectedFile().getAbsolutePath(), map);
                     break;
                 case JFileChooser.CANCEL_OPTION:

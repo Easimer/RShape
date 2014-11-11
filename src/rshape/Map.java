@@ -14,43 +14,36 @@ import java.util.logging.Logger;
  * @author easimer
  */
 public class Map implements Serializable {
-    public Map()
-    {
+
+    public Map() {
         this.version = 1;
         this.layers = new String[5];
     }
-    
-    public Map(int width, int height)
-    {
+
+    public Map(int width, int height) {
         this(); //this Xddddd << bitshifts to the left
         this.width = width;
         this.height = height;
+        this.layers = new String[5];
     }
-    
-    public Map(int width, int height, String title)
-    {
+
+    public Map(int width, int height, String title) {
         this(width, height);
         this.title = title;
     }
-    
-    public Map(int width, int height, String title, String... layers)
-    {
+
+    public Map(int width, int height, String title, String... layers) {
         this(width, height, title);
-        for(int i = 0; i < layers.length; i++)
-        {
-            try
-            {
+        for (int i = 0; i < layers.length; i++) {
+            try {
                 this.layers[i] = layers[i];
-            }
-            catch(Exception ex)
-            {
+            } catch (Exception ex) {
                 Logger.getGlobal().log(Level.SEVERE, "Layer " + i + " is bad.");
             }
         }
     }
-    
-    public void Clear()
-    {
+
+    public void Clear() {
         throw new UnsupportedOperationException("Not implemented");
     }
     int width, height;
